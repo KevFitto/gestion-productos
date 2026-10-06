@@ -236,3 +236,13 @@ Verificación: Flyway aplicó V4 correctamente (success = true). Se consultaron
 ambas tablas en PostgreSQL y se confirmaron la restricción UNIQUE de nombre,
 la clave primaria compuesta y las dos claves foráneas. Las 14 pruebas existentes
 pasaron después de aplicar la migración.
+
+## Paso 11. Crear entidad y repositorio Etiqueta
+
+Se creó Etiqueta con @Entity, @Table(name = "etiqueta"), id Integer generado
+con GenerationType.IDENTITY y nombre String, junto con sus getters y setters,
+tal como indica el ejemplo. Se creó EtiquetaRepository extendiendo
+JpaRepository<Etiqueta, Integer>.
+
+La entidad corresponde a la tabla creada en V4; el repositorio proporciona las
+operaciones de persistencia sin implementar manualmente sus métodos.
