@@ -246,3 +246,19 @@ JpaRepository<Etiqueta, Integer>.
 
 La entidad corresponde a la tabla creada en V4; el repositorio proporciona las
 operaciones de persistencia sin implementar manualmente sus métodos.
+
+## Paso 12. Relacionar Producto y Etiqueta
+
+Se agregó en Producto el campo Set<Etiqueta> etiquetas = new HashSet<>() con
+@ManyToMany y @JoinTable, tal como indica la guía. Se añadieron los imports de
+Set y HashSet.
+
+La relación utiliza producto_etiqueta, creada en V4. joinColumns identifica
+producto_id, que referencia al producto propietario de la relación, e
+inverseJoinColumns identifica etiqueta_id, que referencia a la etiqueta.
+Así, un producto puede tener varias etiquetas y una etiqueta puede estar asociada
+con varios productos.
+
+En este paso se agrega únicamente el campo y su mapeo. JPA accede directamente
+a los campos; la guía todavía no añade métodos de acceso ni endpoints para
+administrar las etiquetas de un producto. No se necesita una nueva migración.

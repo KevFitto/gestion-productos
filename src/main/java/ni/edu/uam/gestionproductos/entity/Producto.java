@@ -2,6 +2,8 @@ package ni.edu.uam.gestionproductos.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "producto")
@@ -42,6 +44,16 @@ public class Producto {
     @ManyToOne
     @JoinColumn(name = "proveedor_id")
     private Proveedor proveedor;
+
+    @ManyToMany
+    @JoinTable(
+        name = "producto_etiqueta",
+        joinColumns =
+            @JoinColumn(name = "producto_id"),
+        inverseJoinColumns =
+            @JoinColumn(name = "etiqueta_id")
+    )
+    private Set<Etiqueta> etiquetas = new HashSet<>();
 
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
