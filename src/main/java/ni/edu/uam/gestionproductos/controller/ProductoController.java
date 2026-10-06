@@ -21,6 +21,14 @@ public class ProductoController {
         return productoService.listar();
     }
 
+    @GetMapping("/categoria/{categoriaId}")
+    public List<Producto> listarPorCategoria(
+            @PathVariable Integer categoriaId) {
+
+        return productoService
+                .listarPorCategoria(categoriaId);
+    }
+
     @GetMapping("/{id}")
     public Producto buscar(@PathVariable Integer id) {
         return productoService.buscarPorId(id);

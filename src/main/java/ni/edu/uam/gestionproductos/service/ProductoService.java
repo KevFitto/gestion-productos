@@ -30,6 +30,13 @@ public class ProductoService {
         return productoRepository.findAll();
     }
 
+    public List<Producto> listarPorCategoria(
+            Integer categoriaId) {
+
+        return productoRepository
+                .findByCategoriaId(categoriaId);
+    }
+
     public Producto buscarPorId(Integer id) {
         return productoRepository.findById(id).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "Producto no encontrado"));

@@ -12,6 +12,10 @@
     {
       "key": "productoId",
       "value": "1"
+    },
+    {
+      "key": "categoriaId",
+      "value": "1"
     }
   ],
   "item": [
@@ -93,6 +97,13 @@
           }
         }
       ]
+    },
+    {
+      "name": "Paso 9 - Consultar productos por categoria",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/productos/categoria/{{categoriaId}}"
+      }
     }
   ]
 }

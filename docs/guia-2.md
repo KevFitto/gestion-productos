@@ -194,3 +194,20 @@ Categoria.productos mediante JPQL para comprobar el mapeo inverso.
 El campo nuevo se mantiene privado sin getter, como en el fragmento del profesor,
 y no se expone actualmente en JSON. Si un paso posterior lo expone, habrá que
 revisar el posible ciclo Categoria → productos → categoria al serializar.
+
+## Paso 9. Consultar productos por categoría
+
+Se agregó findByCategoriaId(Integer categoriaId) en ProductoRepository,
+listarPorCategoria en ProductoService y GET /api/productos/categoria/{categoriaId}
+en ProductoController, siguiendo los tres fragmentos del profesor.
+
+Spring Data JPA deriva la consulta del nombre del método y filtra por el id de
+la categoría relacionada. No es necesario escribir SQL ni agregar una migración.
+Si no hay productos asociados al ID recibido, devuelve HTTP 200 con una lista
+vacía, incluso si la categoría no existe, tal como resulta del ejemplo.
+
+Las pruebas automatizadas verifican que se obtengan únicamente los productos de
+la categoría solicitada y que una categoría sin productos devuelva una lista vacía.
+La colección de Postman incluye GET /api/productos/categoria/{{categoriaId}}, con
+categoriaId = 1 como en la guía. Reiniciar la aplicación desde IntelliJ antes de
+probar y elegir otro ID si se desean consultar los productos de otra categoría.

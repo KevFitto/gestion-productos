@@ -23,6 +23,46 @@ class ApiIntegrationTests {
     @Autowired jakarta.persistence.EntityManager entityManager;
 
     @Test
+    void listarSoloProductosDeLaCategoriaSolicitada() throws Exception {
+        Categoria seleccionada = new Categoria();
+        seleccionada.setNombre("Categoría seleccionada");
+        seleccionada = categorias.saveAndFlush(seleccionada);
+        Categoria otra = new Categoria();
+        otra.setNombre("Otra categoría");
+        otra = categorias.saveAndFlush(otra);
+
+        for (int indice = 0; indice < 3; indice++) {
+            Producto producto = new Producto();
+            producto.setCodigo("CAT-" + System.nanoTime());
+            producto.setNombre("Producto " + indice);
+            producto.setPrecioVenta(new java.math.BigDecimal("10.00"));
+            producto.setCategoria(indice < 2 ? seleccionada : otra);
+            productos.saveAndFlush(producto);
+        }
+        entityManager.clear();
+
+        mvc.perform(get("/api/productos/categoria/{categoriaId}", seleccionada.getId()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", org.hamcrest.Matchers.hasSize(2)))
+                .andExpect(jsonPath("$[*].categoria.id",
+                        org.hamcrest.Matchers.everyItem(org.hamcrest.Matchers.is(seleccionada.getId()))));
+    }
+
+    @Test
+    void listarCategoriaSinProductosDevuelveListaVacia() throws Exception {
+        Categoria vacia = new Categoria();
+        vacia.setNombre("Categoría vacía");
+        vacia = categorias.saveAndFlush(vacia);
+
+        mvc.perform(get("/api/productos/categoria/{categoriaId}", vacia.getId()))
+                .andExpect(status().isOk())
+                .andExpect(content().json("[]"));
+        mvc.perform(get("/api/productos/categoria/-1"))
+                .andExpect(status().isOk())
+                .andExpect(content().json("[]"));
+    }
+
+    @Test
     void eliminarProductoDevuelve204SinContenido() throws Exception {
         Categoria categoria = new Categoria();
         categoria.setNombre("Categoría para eliminación");
