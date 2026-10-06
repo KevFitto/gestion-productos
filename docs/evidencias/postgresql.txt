@@ -1,0 +1,13 @@
+ version |         description          | success 
+---------+------------------------------+---------
+ 1       | crear tablas                 | t
+ 2       | agregar descripcion producto | t
+ 3       | crear proveedor y relacion   | t
+(3 rows)
+
+ codigo  |  categoria   |       proveedor       
+---------+--------------+-----------------------
+ LAP-001 | Computadoras | Distribuidora Tech
+ MOU-001 | Accesorios   | Suministros Digitales
+(2 rows)
+

@@ -1,0 +1,308 @@
+{
+  "info": {
+    "name": "Gestión de productos — JPA",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Ejecutar en orden con la API iniciada. Cada ejecución crea registros nuevos. Los IDs se capturan automáticamente."
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    }
+  ],
+  "item": [
+    {
+      "name": "01 Crear Computadoras",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/categorias",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Computadoras\",\n  \"activa\": true\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Estado HTTP\", () => pm.response.to.have.status(201));",
+              "pm.collectionVariables.set(\"categoriaComputadoras\", pm.response.json().id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 Crear Accesorios",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/categorias",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Accesorios\",\n  \"activa\": true\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Estado HTTP\", () => pm.response.to.have.status(201));",
+              "pm.collectionVariables.set(\"categoriaAccesorios\", pm.response.json().id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 Crear Monitores",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/categorias",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Monitores\",\n  \"activa\": true\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Estado HTTP\", () => pm.response.to.have.status(201));",
+              "pm.collectionVariables.set(\"categoriaMonitores\", pm.response.json().id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 Crear proveedor Tech",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/proveedores",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Distribuidora Tech\",\n  \"telefono\": \"2222-1000\",\n  \"correo\": \"ventas@tech.example\",\n  \"activo\": true\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Estado HTTP\", () => pm.response.to.have.status(201));",
+              "pm.collectionVariables.set(\"proveedorTech\", pm.response.json().id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "05 Crear proveedor Digital",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/proveedores",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Suministros Digitales\",\n  \"telefono\": \"2222-2000\",\n  \"correo\": \"ventas@digital.example\",\n  \"activo\": true\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Estado HTTP\", () => pm.response.to.have.status(201));",
+              "pm.collectionVariables.set(\"proveedorDigital\", pm.response.json().id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "06 Crear laptop",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/productos",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"codigo\": \"LAP-{{$timestamp}}\",\n  \"nombre\": \"Laptop Lenovo\",\n  \"categoria\": {\n    \"id\": \"{{categoriaComputadoras}}\"\n  },\n  \"precioVenta\": 850,\n  \"existencia\": 10,\n  \"descripcion\": \"Laptop para oficina\",\n  \"proveedor\": {\n    \"id\": \"{{proveedorTech}}\"\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Estado HTTP\", () => pm.response.to.have.status(201));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "07 Crear mouse",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/productos",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"codigo\": \"MOU-{{$timestamp}}\",\n  \"nombre\": \"Mouse inalámbrico\",\n  \"categoria\": {\n    \"id\": \"{{categoriaAccesorios}}\"\n  },\n  \"precioVenta\": 20,\n  \"existencia\": 25,\n  \"descripcion\": \"Mouse USB\",\n  \"proveedor\": {\n    \"id\": \"{{proveedorDigital}}\"\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Estado HTTP\", () => pm.response.to.have.status(201));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Consultar categorias",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/categorias"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Estado HTTP\", () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Consultar proveedores",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/proveedores"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Estado HTTP\", () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Consultar productos",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/productos"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Estado HTTP\", () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
