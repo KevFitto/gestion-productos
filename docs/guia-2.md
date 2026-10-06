@@ -29,3 +29,32 @@ La arquitectura objetivo es Controller → Service → Repository → PostgreSQL
 En este paso solo se organiza la estructura; los controladores existentes aún
 acceden directamente a los repositorios. Los servicios y DTOs se incorporarán
 en los siguientes pasos.
+
+## Paso 2. Crear ProductoService
+
+Se creó ProductoService con listar, buscarPorId, guardar y eliminar.
+ProductoController ahora delega al servicio y ya no depende de repositorios.
+La resolución y validación de categoría y proveedor se trasladó al servicio,
+conservando las relaciones y respuestas de error de la práctica anterior.
+Las operaciones de escritura se ejecutan en transacciones; las consultas son
+de solo lectura. El POST sigue descartando el ID recibido para crear registros;
+guardar en el servicio conserva el ID para admitir futuras actualizaciones.
+No se agregaron endpoints nuevos en este paso.
+
+### ¿Por qué el Controller no debería utilizar directamente ProductoRepository?
+
+El controlador debe ocuparse de HTTP y delegar las reglas de negocio al servicio.
+Así las reglas se centralizan, pueden reutilizarse y probarse independientemente
+de los endpoints, y una operación que utiliza varios repositorios puede ejecutarse
+dentro de una misma transacción.
+
+### Observaciones sobre el ejemplo
+
+- El bloque está etiquetado como TypeScript, pero el código es Java.
+- RuntimeException("Producto no encontrado") no expresa un estado HTTP: sin
+  manejo adicional, al llegar a un endpoint produciría un error 500. Se usa
+  ResponseStatusException con 404, siguiendo el manejo existente del proyecto.
+- Antes de eliminar se comprueba que el producto exista, devolviendo también 404
+  si no existe.
+
+Estas observaciones no permiten asegurar cuál era el error anunciado por el profesor.
