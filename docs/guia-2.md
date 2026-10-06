@@ -77,3 +77,21 @@ La colección de la primera guía conserva sus solicitudes como referencia hist�
 sus POST de productos no están disponibles en este paso.
 
 El bloque de la guía está etiquetado como Kotlin, aunque su contenido es Java.
+
+## Paso 4. Crear ProductoRequestDTO
+
+Se creó ProductoRequestDTO en el paquete dto con los campos codigo y nombre
+(String), precioVenta (BigDecimal), existencia y categoriaId (Integer), junto
+con sus getters y setters, tal como indica la guía.
+
+### ¿Qué diferencia existe entre una entidad JPA y un DTO?
+
+Una entidad JPA representa datos persistentes y sus relaciones; se mapea a la
+base de datos mediante anotaciones como @Entity, @Id y @ManyToOne y es administrada
+por JPA. Un DTO transporta los datos que necesita una operación de la API, sin
+ser una entidad persistente ni requerir un mapeo a una tabla.
+
+Por ejemplo, Producto tiene una relación con un objeto Categoria, mientras que
+ProductoRequestDTO recibe únicamente categoriaId. Esto permite definir la entrada
+de la API sin exponer directamente toda la entidad. Su uso en el controlador y
+el servicio se incorporará cuando lo indique la guía.
