@@ -58,3 +58,22 @@ dentro de una misma transacción.
   si no existe.
 
 Estas observaciones no permiten asegurar cuál era el error anunciado por el profesor.
+
+## Paso 3. Refactorizar ProductoController
+
+ProductoController queda como el ejemplo del profesor: inyección de ProductoService,
+GET /api/productos para listar y GET /api/productos/{id} para buscar.
+El POST de productos se retira de este controlador siguiendo el código mostrado.
+ProductoService conserva el estado del commit del paso 2.
+
+Las pruebas automatizadas se adaptaron a los GET y verifican el listado, la búsqueda
+con sus relaciones y la respuesta ante un ID inexistente.
+
+Para Postman, importar postman/guia-2.postman_collection.json y reiniciar la aplicación
+desde IntelliJ para cargar el controlador actualizado. Consultar primero el listado
+y después un ID existente. La variable productoId comienza en 1 como en la guía,
+pero ese registro puede no existir; en ese caso el servicio actual devuelve 404.
+La colección de la primera guía conserva sus solicitudes como referencia histórica;
+sus POST de productos no están disponibles en este paso.
+
+El bloque de la guía está etiquetado como Kotlin, aunque su contenido es Java.

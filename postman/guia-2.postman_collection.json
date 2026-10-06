@@ -1,0 +1,33 @@
+{
+  "info": {
+    "name": "Guía 2 - Paso 3",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Reiniciar la API desde IntelliJ antes de ejecutar. Consultar el listado y elegir un ID existente; 1 puede no existir."
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "productoId",
+      "value": "1"
+    }
+  ],
+  "item": [
+    {
+      "name": "Listar productos",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/productos"
+      }
+    },
+    {
+      "name": "Buscar producto por ID",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/productos/{{productoId}}"
+      }
+    }
+  ]
+}

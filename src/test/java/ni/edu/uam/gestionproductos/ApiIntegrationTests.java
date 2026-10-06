@@ -19,9 +19,10 @@ class ApiIntegrationTests {
     @Autowired MockMvc mvc;
     @Autowired CategoriaRepository categorias;
     @Autowired ProveedorRepository proveedores;
+    @Autowired ProductoRepository productos;
 
     @Test
-    void crearYConsultarProductoConRelaciones() throws Exception {
+    void listarYBuscarProductoConRelaciones() throws Exception {
         Categoria categoria = new Categoria();
         categoria.setNombre("Categoría de prueba");
         categoria = categorias.saveAndFlush(categoria);
@@ -31,12 +32,18 @@ class ApiIntegrationTests {
         proveedor.setCorreo("prueba@example.com");
         proveedor = proveedores.saveAndFlush(proveedor);
         String codigo = "TEST-" + System.nanoTime();
-        mvc.perform(post("/api/productos").contentType(MediaType.APPLICATION_JSON).content("""
-                {"codigo":"%s","nombre":"Laptop","categoria":{"id":%d},
-                 "proveedor":{"id":%d},"precioVenta":850.00,"existencia":10,
-                 "descripcion":"Equipo de prueba"}
-                """.formatted(codigo, categoria.getId(), proveedor.getId())))
-                .andExpect(status().isCreated())
+        Producto producto = new Producto();
+        producto.setCodigo(codigo);
+        producto.setNombre("Laptop");
+        producto.setCategoria(categoria);
+        producto.setProveedor(proveedor);
+        producto.setPrecioVenta(new java.math.BigDecimal("850.00"));
+        producto.setExistencia(10);
+        producto.setDescripcion("Equipo de prueba");
+        producto = productos.saveAndFlush(producto);
+        mvc.perform(get("/api/productos/{id}", producto.getId()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(producto.getId()))
                 .andExpect(jsonPath("$.categoria.nombre").value("Categoría de prueba"))
                 .andExpect(jsonPath("$.proveedor.nombre").value("Proveedor de prueba"))
                 .andExpect(jsonPath("$.descripcion").value("Equipo de prueba"));
@@ -46,19 +53,8 @@ class ApiIntegrationTests {
     }
 
     @Test
-    void rechazarProductoInvalido() throws Exception {
-        mvc.perform(post("/api/productos").contentType(MediaType.APPLICATION_JSON)
-                .content("{\"codigo\":\"\",\"nombre\":\"\",\"precioVenta\":-1,\"existencia\":-2}"))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    void rechazarCategoriaInexistente() throws Exception {
-        mvc.perform(post("/api/productos").contentType(MediaType.APPLICATION_JSON)
-                .content("""
-                        {"codigo":"SIN-CAT","nombre":"Prueba","categoria":{"id":-1},
-                         "precioVenta":10,"existencia":1}
-                        """))
+    void buscarProductoInexistente() throws Exception {
+        mvc.perform(get("/api/productos/-1"))
                 .andExpect(status().isNotFound());
     }
 
