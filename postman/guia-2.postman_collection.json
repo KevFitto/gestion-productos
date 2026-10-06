@@ -50,6 +50,29 @@
           }
         }
       }
+    },
+    {
+      "name": "Paso 6 - Actualizar producto con DTO",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/productos/{{productoId}}",
+        "description": "Usar el ID del producto a actualizar y una categoriaId existente. El código no debe pertenecer a otro producto.",
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"codigo\": \"TEC-001\",\r\n  \"nombre\": \"Teclado mecánico actualizado\",\r\n  \"precioVenta\": 80.5,\r\n  \"existencia\": 15,\r\n  \"categoriaId\": 2\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
     }
   ]
 }

@@ -20,6 +20,57 @@ class ApiIntegrationTests {
     @Autowired CategoriaRepository categorias;
     @Autowired ProveedorRepository proveedores;
     @Autowired ProductoRepository productos;
+    @Autowired jakarta.persistence.EntityManager entityManager;
+
+    @Test
+    void actualizarProductoConDto() throws Exception {
+        Categoria original = new Categoria();
+        original.setNombre("Categoría original");
+        original = categorias.saveAndFlush(original);
+        Categoria nueva = new Categoria();
+        nueva.setNombre("Categoría nueva");
+        nueva = categorias.saveAndFlush(nueva);
+        Producto producto = new Producto();
+        producto.setCodigo("OLD-" + System.nanoTime());
+        producto.setNombre("Teclado anterior");
+        producto.setPrecioVenta(new java.math.BigDecimal("50.00"));
+        producto.setExistencia(5);
+        producto.setCategoria(original);
+        producto.setDescripcion("Descripción existente");
+        Integer id = productos.saveAndFlush(producto).getId();
+        long cantidad = productos.count();
+        String codigo = "UPD-" + System.nanoTime();
+
+        mvc.perform(put("/api/productos/{id}", id).contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        {"codigo":"%s","nombre":"Teclado actualizado",
+                         "precioVenta":80.50,"existencia":15,"categoriaId":%d}
+                        """.formatted(codigo, nueva.getId())))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(id));
+
+        entityManager.flush();
+        entityManager.clear();
+        mvc.perform(get("/api/productos/{id}", id))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.codigo").value(codigo))
+                .andExpect(jsonPath("$.nombre").value("Teclado actualizado"))
+                .andExpect(jsonPath("$.precioVenta").value(80.50))
+                .andExpect(jsonPath("$.existencia").value(15))
+                .andExpect(jsonPath("$.categoria.id").value(nueva.getId()))
+                .andExpect(jsonPath("$.descripcion").value("Descripción existente"));
+        org.junit.jupiter.api.Assertions.assertEquals(cantidad, productos.count());
+    }
+
+    @Test
+    void actualizarProductoInexistente() throws Exception {
+        mvc.perform(put("/api/productos/-1").contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        {"codigo":"NO-EXISTE","nombre":"Prueba",
+                         "precioVenta":10,"existencia":1,"categoriaId":-1}
+                        """))
+                .andExpect(status().isNotFound());
+    }
 
     @Test
     void listarYBuscarProductoConRelaciones() throws Exception {

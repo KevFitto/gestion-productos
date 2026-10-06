@@ -74,6 +74,27 @@ public class ProductoService {
     }
 
     @Transactional
+    public Producto actualizar(
+            Integer id,
+            ProductoRequestDTO dto) {
+
+        Producto producto = buscarPorId(id);
+
+        Categoria categoria = categoriaRepository
+                .findById(dto.getCategoriaId())
+                .orElseThrow(() ->
+                        new RuntimeException("Categoría no encontrada"));
+
+        producto.setCodigo(dto.getCodigo());
+        producto.setNombre(dto.getNombre());
+        producto.setPrecioVenta(dto.getPrecioVenta());
+        producto.setExistencia(dto.getExistencia());
+        producto.setCategoria(categoria);
+
+        return productoRepository.save(producto);
+    }
+
+    @Transactional
     public void eliminar(Integer id) {
         productoRepository.delete(buscarPorId(id));
     }

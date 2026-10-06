@@ -31,5 +31,13 @@ public class ProductoController {
 
         return productoService.guardar(dto);
     }
+
+    @PutMapping("/{id}")
+    public Producto actualizar(
+            @PathVariable Integer id,
+            @RequestBody ProductoRequestDTO dto) {
+
+        return productoService.actualizar(id, dto);
+    }
 }
 

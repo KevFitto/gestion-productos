@@ -126,3 +126,24 @@ creación se debe usar otro código, porque codigo tiene una restricción UNIQUE
 
 La prueba automatizada crea una categoría temporal, registra el producto con el DTO
 y verifica su respuesta y su aparición en el listado con la categoría correspondiente.
+
+## Paso 6. Implementar actualización de productos
+
+Se agregó actualizar(Integer id, ProductoRequestDTO dto) siguiendo el ejemplo:
+busca el producto, consulta la categoría, modifica los cinco campos recibidos y
+guarda la entidad existente. Se conserva RuntimeException para la categoría no
+encontrada. El método lleva @Transactional para habilitar escritura frente a la
+configuración de solo lectura del servicio existente.
+
+El controlador expone PUT /api/productos/{id}, recibe el DTO y devuelve el producto
+actualizado con HTTP 200. La colección de Postman incluye esta solicitud.
+
+Para probar, reiniciar la aplicación desde IntelliJ, elegir un producto existente
+y configurar productoId en Postman. Enviar los cinco campos del DTO con una
+categoriaId existente. El código puede conservarse o cambiarse por uno que no
+pertenezca a otro producto. Después, consultar el mismo ID mediante GET.
+
+Las pruebas automatizadas verifican que los cambios de campos y categoría se
+persisten, el ID se mantiene y no aumenta la cantidad de productos. También
+verifican el 404 para un producto inexistente, conforme al buscarPorId que se
+conservó del paso 2.
