@@ -147,3 +147,28 @@ Las pruebas automatizadas verifican que los cambios de campos y categoría se
 persisten, el ID se mantiene y no aumenta la cantidad de productos. También
 verifican el 404 para un producto inexistente, conforme al buscarPorId que se
 conservó del paso 2.
+
+## Paso 7. Implementar eliminación
+
+Se agregó al controlador el método del profesor con @DeleteMapping("/{id}"),
+ResponseEntity<Void> y ResponseEntity.noContent().build(). Se reutiliza el método
+eliminar del servicio existente. Un producto eliminado devuelve 204 No Content,
+sin cuerpo de respuesta. Si no existe, el servicio conservado del paso 2 devuelve 404.
+
+Las pruebas automatizadas eliminan un producto temporal, verifican 204 y cuerpo
+vacío, y comprueban que un GET posterior devuelve 404 y que la categoría permanece.
+También se verifica la eliminación de un ID inexistente. Los datos de prueba se
+revierten mediante transacciones.
+
+En Postman, reiniciar previamente la aplicación desde IntelliJ y ejecutar DELETE
+/api/productos/{id} usando el ID de un producto que se quiera eliminar. La colección
+incluye la solicitud con la variable productoId; el valor 1 de la guía requiere
+que exista ese producto.
+
+| Método | Endpoint | Operación |
+| --- | --- | --- |
+| GET | /api/productos | Listar |
+| GET | /api/productos/{id} | Buscar |
+| POST | /api/productos | Crear |
+| PUT | /api/productos/{id} | Actualizar |
+| DELETE | /api/productos/{id} | Eliminar |

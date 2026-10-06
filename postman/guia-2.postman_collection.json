@@ -73,6 +73,26 @@
           }
         }
       }
+    },
+    {
+      "name": "Paso 7 - Eliminar producto",
+      "request": {
+        "method": "DELETE",
+        "url": "{{baseUrl}}/api/productos/{{productoId}}",
+        "description": "Elimina el producto indicado por productoId. Usar un ID existente. Resultado esperado: 204 No Content."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Estado 204\", () => pm.response.to.have.status(204));",
+              "pm.test(\"Sin contenido\", () => pm.expect(pm.response.text()).to.eql(\"\"));"
+            ]
+          }
+        }
+      ]
     }
   ]
 }

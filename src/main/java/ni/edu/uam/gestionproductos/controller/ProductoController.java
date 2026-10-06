@@ -4,6 +4,7 @@ import java.util.List;
 import ni.edu.uam.gestionproductos.dto.ProductoRequestDTO;
 import ni.edu.uam.gestionproductos.entity.Producto;
 import ni.edu.uam.gestionproductos.service.ProductoService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -38,6 +39,15 @@ public class ProductoController {
             @RequestBody ProductoRequestDTO dto) {
 
         return productoService.actualizar(id, dto);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminar(
+            @PathVariable Integer id) {
+
+        productoService.eliminar(id);
+
+        return ResponseEntity.noContent().build();
     }
 }
 

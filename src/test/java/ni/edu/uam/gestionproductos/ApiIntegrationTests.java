@@ -23,6 +23,35 @@ class ApiIntegrationTests {
     @Autowired jakarta.persistence.EntityManager entityManager;
 
     @Test
+    void eliminarProductoDevuelve204SinContenido() throws Exception {
+        Categoria categoria = new Categoria();
+        categoria.setNombre("Categoría para eliminación");
+        categoria = categorias.saveAndFlush(categoria);
+        Producto producto = new Producto();
+        producto.setCodigo("DEL-" + System.nanoTime());
+        producto.setNombre("Producto temporal");
+        producto.setPrecioVenta(new java.math.BigDecimal("10.00"));
+        producto.setCategoria(categoria);
+        Integer id = productos.saveAndFlush(producto).getId();
+
+        mvc.perform(delete("/api/productos/{id}", id))
+                .andExpect(status().isNoContent())
+                .andExpect(content().string(""));
+
+        entityManager.flush();
+        entityManager.clear();
+        mvc.perform(get("/api/productos/{id}", id))
+                .andExpect(status().isNotFound());
+        org.junit.jupiter.api.Assertions.assertTrue(categorias.existsById(categoria.getId()));
+    }
+
+    @Test
+    void eliminarProductoInexistente() throws Exception {
+        mvc.perform(delete("/api/productos/-1"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     void actualizarProductoConDto() throws Exception {
         Categoria original = new Categoria();
         original.setNombre("Categoría original");
