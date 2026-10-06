@@ -18,6 +18,35 @@ import static org.junit.jupiter.api.Assertions.*;
 class ProductoServiceIntegrationTests {
     @Autowired ProductoService service;
     @Autowired CategoriaRepository categorias;
+    @Autowired jakarta.persistence.EntityManager entityManager;
+
+    @Test
+    void categoriaRelacionaSusProductosPorElLadoInverso() {
+        Categoria categoria = new Categoria();
+        categoria.setNombre("Categoría con productos");
+        categoria = categorias.saveAndFlush(categoria);
+
+        for (int indice = 0; indice < 2; indice++) {
+            Producto producto = new Producto();
+            producto.setCodigo("REL-" + System.nanoTime());
+            producto.setNombre("Producto relacionado " + indice);
+            producto.setPrecioVenta(new BigDecimal("10.00"));
+            producto.setCategoria(categoria);
+            service.guardar(producto);
+        }
+
+        Integer categoriaId = categoria.getId();
+        entityManager.flush();
+        entityManager.clear();
+        var relacionados = entityManager.createQuery(
+                "select p from Categoria c join c.productos p where c.id = :id", Producto.class)
+                .setParameter("id", categoriaId)
+                .getResultList();
+
+        assertEquals(2, relacionados.size());
+        assertTrue(relacionados.stream()
+                .allMatch(producto -> categoriaId.equals(producto.getCategoria().getId())));
+    }
 
     @Test
     void guardarBuscarActualizarYEliminar() {

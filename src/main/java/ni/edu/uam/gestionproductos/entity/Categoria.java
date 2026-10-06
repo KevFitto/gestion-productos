@@ -2,6 +2,7 @@ package ni.edu.uam.gestionproductos.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import java.util.List;
 
 @Entity
 @Table(name = "categoria")
@@ -17,6 +18,9 @@ public class Categoria {
 
     @Column(nullable = false)
     private boolean activa = true;
+
+    @OneToMany(mappedBy = "categoria")
+    private List<Producto> productos;
 
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }

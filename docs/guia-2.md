@@ -172,3 +172,25 @@ que exista ese producto.
 | POST | /api/productos | Crear |
 | PUT | /api/productos/{id} | Actualizar |
 | DELETE | /api/productos/{id} | Eliminar |
+
+## Paso 8. Completar la relación Uno a Muchos
+
+Se agregó en Categoria el campo List<Producto> productos con
+@OneToMany(mappedBy = "categoria"), exactamente como indica el ejemplo, junto
+con el import de java.util.List. JPA accede directamente a los campos en estas
+entidades, por lo que no requiere getters ni setters para mapear esta colección.
+
+### ¿Cuál entidad contiene realmente la clave foránea?
+
+La tabla producto contiene categoria_id, que referencia categoria.id.
+Producto es el lado propietario de la relación mediante @ManyToOne y @JoinColumn.
+Categoria es el lado inverso: mappedBy = "categoria" se refiere al atributo
+categoria de la clase Producto, no al nombre de la columna SQL.
+Esta relación reutiliza la clave foránea existente y no necesita otra migración.
+
+La prueba de integración guarda dos productos de una categoría y consulta
+Categoria.productos mediante JPQL para comprobar el mapeo inverso.
+
+El campo nuevo se mantiene privado sin getter, como en el fragmento del profesor,
+y no se expone actualmente en JSON. Si un paso posterior lo expone, habrá que
+revisar el posible ciclo Categoria → productos → categoria al serializar.
