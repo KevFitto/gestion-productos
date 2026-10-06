@@ -95,3 +95,34 @@ Por ejemplo, Producto tiene una relación con un objeto Categoria, mientras que
 ProductoRequestDTO recibe únicamente categoriaId. Esto permite definir la entrada
 de la API sin exponer directamente toda la entidad. Su uso en el controlador y
 el servicio se incorporará cuando lo indique la guía.
+
+## Paso 5. Registrar productos utilizando el DTO
+
+Se agregó guardar(ProductoRequestDTO dto) con la búsqueda de categoría y el mapeo
+de los cinco campos mostrados por el profesor. CategoriaRepository se inyecta
+por constructor. Se conserva RuntimeException("Categoría no encontrada") tal como
+aparece en el ejemplo. El POST /api/productos recibe el DTO y delega al servicio;
+devuelve HTTP 200, que es el comportamiento del controlador indicado en la guía.
+
+El método nuevo mantiene @Transactional para permitir escrituras, ya que el
+servicio del paso 2 tiene @Transactional(readOnly = true) a nivel de clase.
+El método previo guardar(Producto) se conserva como sobrecarga; el POST ahora
+utiliza exclusivamente guardar(ProductoRequestDTO).
+
+### ¿Qué ventaja ofrece enviar categoriaId en lugar del objeto Categoria?
+
+La solicitud es más sencilla y solo identifica una categoría existente. El servidor
+la consulta en la base de datos, evitando recibir datos redundantes o contradictorios
+como un nombre o estado distinto para la misma categoría. También separa el formato
+de entrada de la API de la entidad JPA.
+
+### Prueba
+
+La colección postman/guia-2.postman_collection.json incluye el POST del ejemplo:
+codigo TEC-001, nombre Teclado mecánico, precioVenta 75.50, existencia 20 y categoriaId 2.
+Reiniciar desde IntelliJ antes de probar. Verificar con GET /api/categorias que
+exista la categoría 2; si no existe, utilizar un ID del listado. Para repetir la
+creación se debe usar otro código, porque codigo tiene una restricción UNIQUE.
+
+La prueba automatizada crea una categoría temporal, registra el producto con el DTO
+y verifica su respuesta y su aparición en el listado con la categoría correspondiente.

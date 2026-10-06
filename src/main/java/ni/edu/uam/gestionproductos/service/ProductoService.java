@@ -1,6 +1,8 @@
 package ni.edu.uam.gestionproductos.service;
 
 import java.util.List;
+import ni.edu.uam.gestionproductos.dto.ProductoRequestDTO;
+import ni.edu.uam.gestionproductos.entity.Categoria;
 import ni.edu.uam.gestionproductos.entity.Producto;
 import ni.edu.uam.gestionproductos.repository.CategoriaRepository;
 import ni.edu.uam.gestionproductos.repository.ProductoRepository;
@@ -14,13 +16,13 @@ import org.springframework.web.server.ResponseStatusException;
 @Transactional(readOnly = true)
 public class ProductoService {
     private final ProductoRepository productoRepository;
-    private final CategoriaRepository categorias;
+    private final CategoriaRepository categoriaRepository;
     private final ProveedorRepository proveedores;
 
-    public ProductoService(ProductoRepository productoRepository, CategoriaRepository categorias,
+    public ProductoService(ProductoRepository productoRepository, CategoriaRepository categoriaRepository,
                            ProveedorRepository proveedores) {
         this.productoRepository = productoRepository;
-        this.categorias = categorias;
+        this.categoriaRepository = categoriaRepository;
         this.proveedores = proveedores;
     }
 
@@ -39,7 +41,7 @@ public class ProductoService {
         if (categoriaId == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Debe indicar categoria.id");
         }
-        producto.setCategoria(categorias.findById(categoriaId).orElseThrow(() ->
+        producto.setCategoria(categoriaRepository.findById(categoriaId).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "Categoría no encontrada")));
         if (producto.getProveedor() != null) {
             Integer proveedorId = producto.getProveedor().getId();
@@ -50,6 +52,25 @@ public class ProductoService {
                     new ResponseStatusException(HttpStatus.NOT_FOUND, "Proveedor no encontrado")));
         }
         return productoRepository.saveAndFlush(producto);
+    }
+
+    @Transactional
+    public Producto guardar(ProductoRequestDTO dto) {
+
+        Categoria categoria = categoriaRepository
+                .findById(dto.getCategoriaId())
+                .orElseThrow(() ->
+                        new RuntimeException("Categoría no encontrada"));
+
+        Producto producto = new Producto();
+
+        producto.setCodigo(dto.getCodigo());
+        producto.setNombre(dto.getNombre());
+        producto.setPrecioVenta(dto.getPrecioVenta());
+        producto.setExistencia(dto.getExistencia());
+        producto.setCategoria(categoria);
+
+        return productoRepository.save(producto);
     }
 
     @Transactional

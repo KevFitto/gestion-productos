@@ -53,6 +53,32 @@ class ApiIntegrationTests {
     }
 
     @Test
+    void registrarProductoConDto() throws Exception {
+        Categoria categoria = new Categoria();
+        categoria.setNombre("Teclados");
+        categoria = categorias.saveAndFlush(categoria);
+        String codigo = "DTO-" + System.nanoTime();
+
+        mvc.perform(post("/api/productos").contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        {"codigo":"%s","nombre":"Teclado mecánico",
+                         "precioVenta":75.50,"existencia":20,"categoriaId":%d}
+                        """.formatted(codigo, categoria.getId())))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").isNumber())
+                .andExpect(jsonPath("$.codigo").value(codigo))
+                .andExpect(jsonPath("$.nombre").value("Teclado mecánico"))
+                .andExpect(jsonPath("$.precioVenta").value(75.50))
+                .andExpect(jsonPath("$.existencia").value(20))
+                .andExpect(jsonPath("$.categoria.id").value(categoria.getId()));
+
+        mvc.perform(get("/api/productos"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[?(@.codigo == '%s')].categoria.id".formatted(codigo))
+                        .value(org.hamcrest.Matchers.hasItem(categoria.getId())));
+    }
+
+    @Test
     void buscarProductoInexistente() throws Exception {
         mvc.perform(get("/api/productos/-1"))
                 .andExpect(status().isNotFound());

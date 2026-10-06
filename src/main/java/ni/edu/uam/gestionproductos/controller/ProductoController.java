@@ -1,6 +1,7 @@
 package ni.edu.uam.gestionproductos.controller;
 
 import java.util.List;
+import ni.edu.uam.gestionproductos.dto.ProductoRequestDTO;
 import ni.edu.uam.gestionproductos.entity.Producto;
 import ni.edu.uam.gestionproductos.service.ProductoService;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +23,13 @@ public class ProductoController {
     @GetMapping("/{id}")
     public Producto buscar(@PathVariable Integer id) {
         return productoService.buscarPorId(id);
+    }
+
+    @PostMapping
+    public Producto guardar(
+            @RequestBody ProductoRequestDTO dto) {
+
+        return productoService.guardar(dto);
     }
 }
 

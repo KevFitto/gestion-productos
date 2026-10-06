@@ -1,8 +1,8 @@
 {
   "info": {
-    "name": "Guía 2 - Paso 3",
+    "name": "Guía 2 - Productos",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "description": "Reiniciar la API desde IntelliJ antes de ejecutar. Consultar el listado y elegir un ID existente; 1 puede no existir."
+    "description": "Reiniciar la API desde IntelliJ antes de ejecutar. Usar IDs existentes. El POST del paso 5 usa categoriaId=2 como en la guía; verificar esa categoría antes de enviarlo. El código TEC-001 debe ser único."
   },
   "variable": [
     {
@@ -27,6 +27,28 @@
       "request": {
         "method": "GET",
         "url": "{{baseUrl}}/api/productos/{{productoId}}"
+      }
+    },
+    {
+      "name": "Paso 5 - Registrar producto con DTO",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/productos",
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"existencia\": 20,\r\n  \"categoriaId\": 2,\r\n  \"nombre\": \"Teclado mecánico\",\r\n  \"precioVenta\": 75.5,\r\n  \"codigo\": \"TEC-001\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
       }
     }
   ]
