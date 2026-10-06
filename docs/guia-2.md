@@ -211,3 +211,28 @@ la categoría solicitada y que una categoría sin productos devuelva una lista v
 La colección de Postman incluye GET /api/productos/categoria/{{categoriaId}}, con
 categoriaId = 1 como en la guía. Reiniciar la aplicación desde IntelliJ antes de
 probar y elegir otro ID si se desean consultar los productos de otra categoría.
+
+## Paso 10. Crear la migración para Etiqueta
+
+Se agregó src/main/resources/db/migration/V4__crear_etiquetas.sql con el SQL
+exacto de la guía. Crea etiqueta y producto_etiqueta con sus claves foráneas
+y una clave primaria compuesta por producto_id y etiqueta_id.
+
+### ¿Por qué una relación Muchos a Muchos requiere una tabla intermedia?
+
+En este modelo relacional, un producto puede tener varias etiquetas y una etiqueta
+puede asociarse con varios productos. Una sola clave foránea en cualquiera de las
+dos tablas no permite representar ambas multiplicidades.
+
+La tabla intermedia guarda una fila por asociación, con una clave foránea hacia
+cada tabla. Por ejemplo, las parejas (1, 2), (1, 3) y (2, 2) indican que el producto
+1 tiene las etiquetas 2 y 3, y el producto 2 también tiene la etiqueta 2.
+La clave primaria compuesta impide repetir una misma asociación y las claves
+foráneas impiden referenciar productos o etiquetas inexistentes.
+
+La entidad Etiqueta y su mapeo JPA se incorporarán cuando lo indique la guía.
+
+Verificación: Flyway aplicó V4 correctamente (success = true). Se consultaron
+ambas tablas en PostgreSQL y se confirmaron la restricción UNIQUE de nombre,
+la clave primaria compuesta y las dos claves foráneas. Las 14 pruebas existentes
+pasaron después de aplicar la migración.
