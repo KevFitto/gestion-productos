@@ -262,3 +262,29 @@ con varios productos.
 En este paso se agrega únicamente el campo y su mapeo. JPA accede directamente
 a los campos; la guía todavía no añade métodos de acceso ni endpoints para
 administrar las etiquetas de un producto. No se necesita una nueva migración.
+
+## Paso 13. Crear etiquetas
+
+Se revisó y conservó EtiquetaController implementado por el estudiante. Expone
+POST /api/etiquetas, recibe un objeto con nombre, lo guarda mediante
+EtiquetaRepository y devuelve la etiqueta con su ID y HTTP 201 Created.
+
+Se verificaron en PostgreSQL las cinco etiquetas que el estudiante ya había creado:
+
+| ID | Nombre |
+| --- | --- |
+| 1 | Oferta |
+| 2 | Importado |
+| 3 | Empresarial |
+| 4 | Portátil |
+| 5 | Gaming |
+
+No se volvieron a insertar. La colección de Postman incluye las cinco solicitudes
+para reproducir el paso en una base sin esas etiquetas. Repetir un nombre existente
+produce un conflicto porque V4 define nombre como UNIQUE.
+
+La prueba automatizada crea una etiqueta temporal con nombre único, comprueba
+HTTP 201 y el ID generado, y consulta la entidad persistida. La transacción de
+prueba se revierte al finalizar. Las 15 pruebas de la copia de trabajo pasaron.
+Los avances existentes del paso 14 y los retos se conservaron fuera del commit
+de este paso para revisarlos cuando corresponda.

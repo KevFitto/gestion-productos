@@ -104,6 +104,121 @@
         "method": "GET",
         "url": "{{baseUrl}}/api/productos/categoria/{{categoriaId}}"
       }
+    },
+    {
+      "name": "Paso 13 - Crear etiqueta Oferta",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/etiquetas",
+        "description": "Esta etiqueta ya existe en la base local. Repetir el mismo nombre produce un conflicto por la restricción UNIQUE.",
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"nombre\": \"Oferta\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Paso 13 - Crear etiqueta Importado",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/etiquetas",
+        "description": "Esta etiqueta ya existe en la base local. Repetir el mismo nombre produce un conflicto por la restricción UNIQUE.",
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"nombre\": \"Importado\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Paso 13 - Crear etiqueta Empresarial",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/etiquetas",
+        "description": "Esta etiqueta ya existe en la base local. Repetir el mismo nombre produce un conflicto por la restricción UNIQUE.",
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"nombre\": \"Empresarial\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Paso 13 - Crear etiqueta Portátil",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/etiquetas",
+        "description": "Esta etiqueta ya existe en la base local. Repetir el mismo nombre produce un conflicto por la restricción UNIQUE.",
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"nombre\": \"Portátil\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Paso 13 - Crear etiqueta Gaming",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/etiquetas",
+        "description": "Esta etiqueta ya existe en la base local. Repetir el mismo nombre produce un conflicto por la restricción UNIQUE.",
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"nombre\": \"Gaming\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
     }
   ]
 }

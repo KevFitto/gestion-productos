@@ -23,6 +23,21 @@ class ApiIntegrationTests {
     @Autowired jakarta.persistence.EntityManager entityManager;
 
     @Test
+    void crearEtiqueta() throws Exception {
+        String nombre = "Etiqueta de prueba " + System.nanoTime();
+        mvc.perform(post("/api/etiquetas").contentType(MediaType.APPLICATION_JSON)
+                .content("{\"nombre\":\"" + nombre + "\"}"))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").isNumber())
+                .andExpect(jsonPath("$.nombre").value(nombre));
+        entityManager.flush();
+        entityManager.clear();
+        org.junit.jupiter.api.Assertions.assertEquals(1L,
+                entityManager.createQuery("select count(e) from Etiqueta e where e.nombre = :nombre", Long.class)
+                        .setParameter("nombre", nombre).getSingleResult());
+    }
+
+    @Test
     void listarSoloProductosDeLaCategoriaSolicitada() throws Exception {
         Categoria seleccionada = new Categoria();
         seleccionada.setNombre("Categoría seleccionada");
