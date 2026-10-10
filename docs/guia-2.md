@@ -306,3 +306,19 @@ La prueba automatizada asocia una etiqueta con un producto temporal, comprueba
 la fila en producto_etiqueta y consulta el producto por GET. También repite la
 asociación tras recargar los datos para verificar que no se duplica.
 Los cambios de los retos permanecen en la copia de trabajo, fuera de este commit.
+
+## Reto 1. Eliminar asociación Producto–Etiqueta
+
+Se revisó y conservó removerEtiqueta y el endpoint
+DELETE /api/productos/{productoId}/etiquetas/{etiquetaId} creados por el estudiante.
+El servicio retira del Set únicamente la etiqueta con el ID indicado y guarda
+el producto dentro de una transacción. Hibernate elimina la asociación de
+producto_etiqueta; no se llama a delete para Producto ni para Etiqueta.
+
+La respuesta es HTTP 200 con el producto actualizado. Repetir la eliminación de
+una asociación ausente devuelve el producto sin cambios. Un producto inexistente
+devuelve 404 mediante buscarPorId.
+
+Las pruebas verifican que permanezcan el producto, la etiqueta, las demás etiquetas
+del producto y las asociaciones de otros productos. También comprueban en SQL que
+la pareja eliminada ya no está y que repetir la solicitud no causa error.

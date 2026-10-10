@@ -130,4 +130,14 @@ public class ProductoService {
 
         return productoRepository.save(producto);
     }
+
+    @Transactional
+    public Producto removerEtiqueta(Integer productoId, Integer etiquetaId) {
+        Producto producto = buscarPorId(productoId);
+
+        // Removemos de la lista (Set) la etiqueta que coincida con el ID enviado
+        producto.getEtiquetas().removeIf(etiqueta -> etiqueta.getId().equals(etiquetaId));
+
+        return productoRepository.save(producto);
+    }
 }

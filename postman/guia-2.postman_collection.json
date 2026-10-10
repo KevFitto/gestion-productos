@@ -231,6 +231,14 @@
         "url": "{{baseUrl}}/api/productos/{{productoId}}/etiquetas/{{etiquetaId}}",
         "description": "Sin body. Configurar productoId=2 y etiquetaId=1 para el ejemplo de la guía, si existen ambos registros."
       }
+    },
+    {
+      "name": "Reto 1 - Eliminar asociacion de etiqueta",
+      "request": {
+        "method": "DELETE",
+        "url": "{{baseUrl}}/api/productos/{{productoId}}/etiquetas/{{etiquetaId}}",
+        "description": "Sin body. Retira únicamente la asociación y devuelve el producto actualizado con HTTP 200."
+      }
     }
   ]
 }

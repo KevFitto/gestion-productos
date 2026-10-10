@@ -68,4 +68,14 @@ public class ProductoController {
         Producto productoActualizado = productoService.agregarEtiqueta(productoId, etiquetaId);
         return new ResponseEntity<>(productoActualizado, HttpStatus.OK);
     }
+
+    // --- ENDPOINT PARA EL RETO 1 (Eliminar asociación) ---
+    @DeleteMapping("/{productoId}/etiquetas/{etiquetaId}")
+    public ResponseEntity<Producto> eliminarAsociacionEtiqueta(
+            @PathVariable Integer productoId,
+            @PathVariable Integer etiquetaId) {
+
+        Producto productoActualizado = productoService.removerEtiqueta(productoId, etiquetaId);
+        return new ResponseEntity<>(productoActualizado, HttpStatus.OK);
+    }
 }
