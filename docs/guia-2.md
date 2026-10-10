@@ -322,3 +322,19 @@ devuelve 404 mediante buscarPorId.
 Las pruebas verifican que permanezcan el producto, la etiqueta, las demás etiquetas
 del producto y las asociaciones de otros productos. También comprueban en SQL que
 la pareja eliminada ya no está y que repetir la solicitud no causa error.
+
+## Reto 2. Consultar productos por etiqueta
+
+Se revisó y conservó findByEtiquetasId en ProductoRepository, listarPorEtiqueta
+en ProductoService y GET /api/productos/etiqueta/{etiquetaId} en el controlador.
+Spring Data JPA deriva la consulta recorriendo la colección etiquetas y su id.
+La respuesta es HTTP 200 con la lista de productos asociados; sin coincidencias
+devuelve [], incluso si el ID de etiqueta no existe.
+
+Las pruebas usan productos con varias etiquetas y una etiqueta compartida entre
+productos. Verifican el filtro sin duplicados, que la consulta refleje una
+asociación eliminada y las respuestas vacías. Las 20 pruebas del proyecto pasaron.
+
+Para ambos retos, reiniciar la aplicación desde IntelliJ y configurar productoId
+y etiquetaId en la colección de Postman. El DELETE de asociación no lleva body.
+Las pruebas automatizadas usan datos temporales y revierten sus cambios.

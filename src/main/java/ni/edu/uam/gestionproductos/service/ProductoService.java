@@ -140,4 +140,9 @@ public class ProductoService {
 
         return productoRepository.save(producto);
     }
+
+    public List<Producto> listarPorEtiqueta(Integer etiquetaId) {
+        // Llama al método que debes agregar en ProductoRepository
+        return productoRepository.findByEtiquetasId(etiquetaId);
+    }
 }

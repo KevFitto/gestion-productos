@@ -239,6 +239,14 @@
         "url": "{{baseUrl}}/api/productos/{{productoId}}/etiquetas/{{etiquetaId}}",
         "description": "Sin body. Retira únicamente la asociación y devuelve el producto actualizado con HTTP 200."
       }
+    },
+    {
+      "name": "Reto 2 - Consultar productos por etiqueta",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/productos/etiqueta/{{etiquetaId}}",
+        "description": "Devuelve HTTP 200 y los productos asociados. Sin coincidencias devuelve []."
+      }
     }
   ]
 }

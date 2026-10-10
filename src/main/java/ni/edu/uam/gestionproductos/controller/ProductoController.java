@@ -78,4 +78,13 @@ public class ProductoController {
         Producto productoActualizado = productoService.removerEtiqueta(productoId, etiquetaId);
         return new ResponseEntity<>(productoActualizado, HttpStatus.OK);
     }
+
+    // --- ENDPOINT PARA EL RETO 2 (Consultar productos por etiqueta) ---
+    @GetMapping("/etiqueta/{etiquetaId}")
+    public ResponseEntity<List<Producto>> consultarPorEtiqueta(
+            @PathVariable Integer etiquetaId) {
+
+        List<Producto> productos = productoService.listarPorEtiqueta(etiquetaId);
+        return new ResponseEntity<>(productos, HttpStatus.OK);
+    }
 }
