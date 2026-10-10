@@ -3,8 +3,10 @@ package ni.edu.uam.gestionproductos.service;
 import java.util.List;
 import ni.edu.uam.gestionproductos.dto.ProductoRequestDTO;
 import ni.edu.uam.gestionproductos.entity.Categoria;
+import ni.edu.uam.gestionproductos.entity.Etiqueta;
 import ni.edu.uam.gestionproductos.entity.Producto;
 import ni.edu.uam.gestionproductos.repository.CategoriaRepository;
+import ni.edu.uam.gestionproductos.repository.EtiquetaRepository;
 import ni.edu.uam.gestionproductos.repository.ProductoRepository;
 import ni.edu.uam.gestionproductos.repository.ProveedorRepository;
 import org.springframework.http.HttpStatus;
@@ -18,12 +20,15 @@ public class ProductoService {
     private final ProductoRepository productoRepository;
     private final CategoriaRepository categoriaRepository;
     private final ProveedorRepository proveedores;
+    private final EtiquetaRepository etiquetaRepository; // 1. Declarado
 
+    // 2. Inyectado por constructor
     public ProductoService(ProductoRepository productoRepository, CategoriaRepository categoriaRepository,
-                           ProveedorRepository proveedores) {
+                           ProveedorRepository proveedores, EtiquetaRepository etiquetaRepository) {
         this.productoRepository = productoRepository;
         this.categoriaRepository = categoriaRepository;
         this.proveedores = proveedores;
+        this.etiquetaRepository = etiquetaRepository;
     }
 
     public List<Producto> listar() {
@@ -104,5 +109,25 @@ public class ProductoService {
     @Transactional
     public void eliminar(Integer id) {
         productoRepository.delete(buscarPorId(id));
+    }
+
+    // 3. Método de la guía agregado con @Transactional
+    @Transactional
+    public Producto agregarEtiqueta(
+            Integer productoId,
+            Integer etiquetaId) {
+
+        Producto producto =
+                buscarPorId(productoId);
+
+        Etiqueta etiqueta =
+                etiquetaRepository.findById(etiquetaId)
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "Etiqueta no encontrada"));
+
+        producto.getEtiquetas().add(etiqueta);
+
+        return productoRepository.save(producto);
     }
 }

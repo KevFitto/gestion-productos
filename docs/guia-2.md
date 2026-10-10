@@ -288,3 +288,21 @@ HTTP 201 y el ID generado, y consulta la entidad persistida. La transacción de
 prueba se revierte al finalizar. Las 15 pruebas de la copia de trabajo pasaron.
 Los avances existentes del paso 14 y los retos se conservaron fuera del commit
 de este paso para revisarlos cuando corresponda.
+
+## Paso 14. Asociar etiquetas a un producto
+
+Se revisó y conservó la implementación del estudiante: EtiquetaRepository se
+inyecta por constructor en ProductoService; agregarEtiqueta busca ambos registros,
+añade la etiqueta al Set y guarda el producto, siguiendo el código del profesor.
+@Transactional permite la escritura en el servicio configurado como solo lectura.
+Se incluyen los getters y setters de etiquetas necesarios para acceder a la colección.
+
+ProductoController expone POST /api/productos/{productoId}/etiquetas/{etiquetaId}
+y devuelve el producto actualizado con HTTP 200. No se necesita body.
+La colección Postman incluye la solicitud con variables. Para reproducir el ejemplo,
+usar productoId=2 y etiquetaId=1, comprobando que existan, y reiniciar desde IntelliJ.
+
+La prueba automatizada asocia una etiqueta con un producto temporal, comprueba
+la fila en producto_etiqueta y consulta el producto por GET. También repite la
+asociación tras recargar los datos para verificar que no se duplica.
+Los cambios de los retos permanecen en la copia de trabajo, fuera de este commit.

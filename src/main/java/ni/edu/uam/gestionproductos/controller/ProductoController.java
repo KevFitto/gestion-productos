@@ -4,6 +4,7 @@ import java.util.List;
 import ni.edu.uam.gestionproductos.dto.ProductoRequestDTO;
 import ni.edu.uam.gestionproductos.entity.Producto;
 import ni.edu.uam.gestionproductos.service.ProductoService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -57,5 +58,14 @@ public class ProductoController {
 
         return ResponseEntity.noContent().build();
     }
-}
 
+    // --- ENDPOINT AGREGADO AQUÍ (Paso 14) ---
+    @PostMapping("/{productoId}/etiquetas/{etiquetaId}")
+    public ResponseEntity<Producto> asociarEtiqueta(
+            @PathVariable Integer productoId,
+            @PathVariable Integer etiquetaId) {
+
+        Producto productoActualizado = productoService.agregarEtiqueta(productoId, etiquetaId);
+        return new ResponseEntity<>(productoActualizado, HttpStatus.OK);
+    }
+}

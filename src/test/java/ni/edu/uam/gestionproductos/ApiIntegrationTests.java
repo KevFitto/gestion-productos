@@ -23,6 +23,44 @@ class ApiIntegrationTests {
     @Autowired jakarta.persistence.EntityManager entityManager;
 
     @Test
+    void asociarEtiquetaPersisteSinDuplicar() throws Exception {
+        Categoria categoria = new Categoria();
+        categoria.setNombre("Categoría para etiquetas");
+        categoria = categorias.saveAndFlush(categoria);
+        Producto producto = new Producto();
+        producto.setCodigo("TAG-" + System.nanoTime());
+        producto.setNombre("Producto etiquetado");
+        producto.setPrecioVenta(new java.math.BigDecimal("10.00"));
+        producto.setCategoria(categoria);
+        Integer productoId = productos.saveAndFlush(producto).getId();
+        Etiqueta etiqueta = new Etiqueta();
+        etiqueta.setNombre("Oferta de prueba " + System.nanoTime());
+        entityManager.persist(etiqueta);
+        entityManager.flush();
+        Integer etiquetaId = etiqueta.getId();
+        entityManager.clear();
+
+        for (int intento = 0; intento < 2; intento++) {
+            mvc.perform(post("/api/productos/{productoId}/etiquetas/{etiquetaId}", productoId, etiquetaId))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.id").value(productoId))
+                    .andExpect(jsonPath("$.etiquetas", org.hamcrest.Matchers.hasSize(1)))
+                    .andExpect(jsonPath("$.etiquetas[0].id").value(etiquetaId));
+            entityManager.flush();
+            entityManager.clear();
+        }
+        Number asociaciones = (Number) entityManager.createNativeQuery(
+                "select count(*) from producto_etiqueta where producto_id = :producto and etiqueta_id = :etiqueta")
+                .setParameter("producto", productoId)
+                .setParameter("etiqueta", etiquetaId)
+                .getSingleResult();
+        org.junit.jupiter.api.Assertions.assertEquals(1L, asociaciones.longValue());
+        mvc.perform(get("/api/productos/{id}", productoId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.etiquetas[0].id").value(etiquetaId));
+    }
+
+    @Test
     void crearEtiqueta() throws Exception {
         String nombre = "Etiqueta de prueba " + System.nanoTime();
         mvc.perform(post("/api/etiquetas").contentType(MediaType.APPLICATION_JSON)
