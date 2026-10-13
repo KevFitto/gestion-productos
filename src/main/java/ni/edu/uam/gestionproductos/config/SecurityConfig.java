@@ -107,7 +107,10 @@ public class SecurityConfig {
                     .hasAnyRole("USER", "ADMIN")
                 .requestMatchers("/api/productos/**")
                     .hasRole("ADMIN")
-                // Categorías: se protegerán en el reto final.
+                .requestMatchers(HttpMethod.GET, "/api/categorias", "/api/categorias/**")
+                    .hasAnyRole("USER", "ADMIN")
+                .requestMatchers("/api/categorias", "/api/categorias/**")
+                    .hasRole("ADMIN")
                 .anyRequest().authenticated()
             )
             .oauth2ResourceServer(oauth -> oauth.jwt(jwt ->
