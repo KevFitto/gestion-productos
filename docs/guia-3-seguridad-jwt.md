@@ -85,3 +85,48 @@ en los siguientes pasos; todavía no se utilizan tokens.
 
 En otra computadora se debe generar una clave nueva y configurar la variable
 en Run/Debug. No compartir el XML local ni capturas que muestren la clave.
+
+## Paso 5. Configurar Spring Security
+
+SecurityConfig contiene la configuración del docente, cambiando el paquete
+a ni.edu.uam.gestionproductos.config y omitiendo el import Customizer sin uso.
+El constructor DaoAuthenticationProvider(UserDetailsService) y los componentes
+JWT utilizados son compatibles con Spring Security 7.1.1.
+
+- Usuarios de laboratorio en memoria: admin con rol ADMIN y operador con rol
+  USER, usando las contraseñas del ejemplo del docente y BCrypt.
+- AuthenticationManager verifica las credenciales.
+- JWT_SECRET_BASE64 es obligatoria: se decodifica a una clave HmacSHA256 de
+  al menos 32 bytes. Sin la variable, la aplicación no inicia.
+- JwtEncoder firma tokens; JwtDecoder valida HS256 y vencimiento.
+- El claim roles se convierte en autoridades con prefijo ROLE_.
+- No se mantienen sesiones HTTP y se desactiva CSRF conforme al ejemplo.
+
+| Ruta | Regla en este paso |
+| --- | --- |
+| /api/auth/** y /api/publico/** | Acceso anónimo permitido |
+| GET /api/productos/** | USER o ADMIN |
+| Otros métodos /api/productos/** | ADMIN |
+| Cualquier otra ruta | Usuario autenticado |
+
+Categorías todavía no tiene restricciones por rol; cualquier usuario autenticado
+puede acceder a sus endpoints. Se implementarán esas restricciones en el reto
+final, como indica la guía. Los controladores AuthController y PublicoController
+continúan vacíos: permitir sus rutas no crea aún el login ni el saludo.
+
+Se agregó spring-boot-starter-security-test únicamente para pruebas, incluyendo
+la integración de MockMvc con Spring Security en Boot 4. Las pruebas existentes
+del CRUD se ejecutan con un usuario ADMIN simulado, sin desactivar los filtros.
+SecurityIntegrationTests usa JWT realmente firmados con JwtEncoder y valida
+usuarios, consulta por rol, denegación de modificaciones a USER, eliminación
+por ADMIN, tokens vencidos o alterados, roles desconocidos y ausencia de sesión.
+Las pruebas se ejecutan con una clave criptográfica temporal en la variable
+de entorno, distinta de la clave local de IntelliJ, sin mostrarla ni guardarla.
+
+Verificación final: Maven ejecutó 30 pruebas, todas aprobadas. Para ejecutar
+las pruebas desde IntelliJ, configurar también JWT_SECRET_BASE64 en la
+configuración de JUnit; la configuración de ejecución de la aplicación
+no se hereda automáticamente.
+
+Referencia de integración de pruebas para Boot 4:
+https://docs.spring.io/spring-boot/api/java/org/springframework/boot/security/test/autoconfigure/webmvc/SecurityMockMvcAutoConfiguration.html
