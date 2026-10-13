@@ -60,3 +60,28 @@ Los controladores CRUD y los demás archivos existentes se conservan.
 Los campos, métodos y anotaciones de las nuevas clases se agregarán conforme
 a los siguientes pasos. Esta organización todavía no cambia la seguridad
 ni agrega endpoints. Verificación: compilación con Maven.
+
+## Paso 4. Configurar el secreto JWT
+
+Se generaron 32 bytes aleatorios mediante el generador criptográfico
+System.Security.Cryptography.RandomNumberGenerator y se codificaron en Base64,
+equivalente al generador Java temporal propuesto.
+
+La variable JWT_SECRET_BASE64 se guardó únicamente en una configuración local
+de IntelliJ llamada **GestionProductosApplication JWT**, basada en la
+configuración de Spring Boot existente. Su archivo está dentro de
+.idea/runConfigurations/, excluido de Git por la regla .idea del proyecto.
+El valor no se imprime ni se incluye en esta documentación.
+
+Para ejecutar desde IntelliJ, seleccionar **GestionProductosApplication JWT**
+en el selector Run/Debug. Si la aplicación ya está ejecutándose, detenerla
+antes de iniciar esta configuración para evitar ocupar dos veces el puerto
+8080. Reiniciar la aplicación después de cambiar la variable.
+
+Se verificó que el valor Base64 guardado decodifica a 32 bytes y que Git ignora
+el archivo local. No se agregaron secretos a application.properties ni al
+código. La lectura de la variable y la firma/validación HS256 se implementarán
+en los siguientes pasos; todavía no se utilizan tokens.
+
+En otra computadora se debe generar una clave nueva y configurar la variable
+en Run/Debug. No compartir el XML local ni capturas que muestren la clave.
