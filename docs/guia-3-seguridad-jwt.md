@@ -164,3 +164,50 @@ ausencia de sesión y rechazo de credenciales incorrectas.
 
 Verificación: suite completa de Maven con 33 pruebas aprobadas, sin fallos
 ni errores, usando PostgreSQL y una clave temporal no publicada.
+
+## Paso 7. Verificar en Postman
+
+Se creó e importó en Postman instalado la colección **NicaMarket – JWT**:
+postman/nicamarket-jwt.postman_collection.json.
+La variable de colección baseUrl contiene http://localhost:8080.
+
+Ejecución real en Collection Runner el 12 de octubre de 2026, 20:01,
+hora de Nicaragua: 11 solicitudes, 16 verificaciones aprobadas, cero fallos,
+cero errores y cero pruebas omitidas.
+
+| Prueba | Resultado observado |
+| --- | --- |
+| Saludo sin token | 200 |
+| Login ADMIN válido | 200 y token Bearer |
+| Login con contraseña incorrecta | 401 |
+| Productos sin token | 401 |
+| Productos con USER | 200 |
+| Crear producto con USER | 403 |
+| Productos con firma del token modificada | 401 |
+| Crear producto con ADMIN | 200 y producto persistido |
+
+El POST de productos devuelve 200 porque el controlador actual no declara
+201 Created. La autorización y la creación fueron correctas.
+
+Las tres solicitudes adicionales preparan el token USER, seleccionan una
+categoría existente y eliminan únicamente el producto temporal creado en
+esta ejecución. La limpieza respondió 204 para el producto 210.
+
+Para repetir: iniciar la aplicación con su configuración JWT, abrir la colección,
+pulsar Run y ejecutar todas las solicitudes en orden con una iteración. Se
+requiere al menos una categoría existente. Los cuerpos de los POST incluyen
+los campos del ProductoRequestDTO y un código generado para la prueba.
+
+Los tokens se almacenan en variables locales de la ejecución (pm.variables),
+no en variables persistentes de la colección. La solicitud final elimina
+esas variables. Por ello, para enviar solicitudes individualmente con Send,
+copiar manualmente el token del login a Authorization → Bearer Token, como
+indica el docente. No publicar ni exportar respuestas que contengan tokens.
+
+Evidencias reales de Postman, sin mostrar claves ni tokens:
+
+- [Saludo, login y acceso anónimo](evidencias-jwt/01-saludo-login-anonimo.png)
+- [Consultas y permisos USER](evidencias-jwt/02-user-permisos.png)
+- [Firma alterada, ADMIN y limpieza](evidencias-jwt/03-firma-admin-limpieza.png)
+
+Se detuvo la instancia temporal después de las pruebas para liberar 8080.

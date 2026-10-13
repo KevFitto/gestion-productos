@@ -1,0 +1,405 @@
+{
+  "info": {
+    "name": "NicaMarket – JWT",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Paso 7. Ejecutar completa en Collection Runner, en orden. Tokens en variables locales de la ejecución (pm.variables), sin guardar valores en la colección. Incluye preparación USER/categoría y limpieza del producto temporal. Credenciales exclusivas de laboratorio."
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "01 Saludo publico - 200",
+      "request": {
+        "method": "GET",
+        "auth": {
+          "type": "noauth"
+        },
+        "header": [],
+        "url": "{{baseUrl}}/api/publico/saludo"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "pm.test(\"Saludo esperado\", () => pm.expect(pm.response.json().mensaje).to.eql(\"API NicaMarket operativa\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 Login ADMIN - 200 y JWT",
+      "request": {
+        "method": "POST",
+        "auth": {
+          "type": "noauth"
+        },
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/auth/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"Admin123!\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "pm.test(\"JWT Bearer\", () => {const r=pm.response.json(); pm.expect(r.type).to.eql(\"Bearer\"); pm.expect(r.token.split(\".\")).to.have.lengthOf(3); pm.variables.set(\"tokenAdmin\",r.token);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 Login incorrecto - 401",
+      "request": {
+        "method": "POST",
+        "auth": {
+          "type": "noauth"
+        },
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/auth/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"Incorrecta!\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 401\", () => pm.response.to.have.status(401));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 Productos sin token - 401",
+      "request": {
+        "method": "GET",
+        "auth": {
+          "type": "noauth"
+        },
+        "header": [],
+        "url": "{{baseUrl}}/api/productos"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 401\", () => pm.response.to.have.status(401));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Preparacion - Login USER",
+      "request": {
+        "method": "POST",
+        "auth": {
+          "type": "noauth"
+        },
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/auth/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"operador\",\n  \"password\": \"Operador123!\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "pm.test(\"Token USER recibido\", () => {const r=pm.response.json(); pm.expect(r.type).to.eql(\"Bearer\"); pm.variables.set(\"tokenUser\",r.token);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Preparacion - Categoria existente",
+      "request": {
+        "method": "GET",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenAdmin}}",
+              "type": "string"
+            }
+          ]
+        },
+        "header": [],
+        "url": "{{baseUrl}}/api/categorias"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "pm.test(\"Categoria disponible\", () => {const categorias=pm.response.json(); pm.expect(categorias.length).to.be.above(0); pm.variables.set(\"categoriaId\",categorias[0].id);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "05 Productos con USER - 200",
+      "request": {
+        "method": "GET",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenUser}}",
+              "type": "string"
+            }
+          ]
+        },
+        "header": [],
+        "url": "{{baseUrl}}/api/productos"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "06 Crear con USER - 403",
+      "request": {
+        "method": "POST",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenUser}}",
+              "type": "string"
+            }
+          ]
+        },
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/productos",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"codigo\": \"{{codigoPrueba}}\",\n  \"nombre\": \"Producto temporal prueba JWT\",\n  \"precioVenta\": 25.5,\n  \"existencia\": 2,\n  \"categoriaId\": \"{{categoriaId}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.variables.set(\"codigoPrueba\", \"JWT-\" + Date.now());"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 403\", () => pm.response.to.have.status(403));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "07 Token modificado - 401",
+      "request": {
+        "method": "GET",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenModificado}}",
+              "type": "string"
+            }
+          ]
+        },
+        "header": [],
+        "url": "{{baseUrl}}/api/productos"
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const token=pm.variables.get(\"tokenUser\");",
+              "const inicio=token.lastIndexOf(\".\")+1;",
+              "pm.variables.set(\"tokenModificado\",token.slice(0,inicio)+(token[inicio]===\"A\"?\"B\":\"A\")+token.slice(inicio+1));"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 401\", () => pm.response.to.have.status(401));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "08 Crear con ADMIN - 200",
+      "request": {
+        "method": "POST",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenAdmin}}",
+              "type": "string"
+            }
+          ]
+        },
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/productos",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"codigo\": \"{{codigoPrueba}}\",\n  \"nombre\": \"Producto temporal prueba JWT\",\n  \"precioVenta\": 25.5,\n  \"existencia\": 2,\n  \"categoriaId\": \"{{categoriaId}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));",
+              "pm.test(\"Producto temporal creado\", () => {const p=pm.response.json(); pm.expect(p.codigo).to.eql(pm.variables.get(\"codigoPrueba\")); pm.expect(p.id).to.be.a(\"number\"); pm.variables.set(\"productoTemporalId\",p.id);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Limpieza - Eliminar solo producto temporal - 204",
+      "request": {
+        "method": "DELETE",
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tokenAdmin}}",
+              "type": "string"
+            }
+          ]
+        },
+        "header": [],
+        "url": "{{baseUrl}}/api/productos/{{productoTemporalId}}"
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (!pm.variables.get(\"productoTemporalId\")) { pm.execution.skipRequest(); }"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 204\", () => pm.response.to.have.status(204));",
+              "[\"tokenAdmin\",\"tokenUser\",\"tokenModificado\",\"productoTemporalId\",\"codigoPrueba\",\"categoriaId\"].forEach(k=>pm.variables.unset(k));"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
