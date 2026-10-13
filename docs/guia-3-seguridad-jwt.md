@@ -130,3 +130,37 @@ no se hereda automáticamente.
 
 Referencia de integración de pruebas para Boot 4:
 https://docs.spring.io/spring-boot/api/java/org/springframework/boot/security/test/autoconfigure/webmvc/SecurityMockMvcAutoConfiguration.html
+
+## Paso 6. DTO, emisión JWT y login
+
+Se implementaron los cinco archivos con el código del docente, adaptando
+solamente los paquetes e imports a ni.edu.uam.gestionproductos:
+
+- LoginRequest es un record con username y password.
+- LoginResponse es un record con token y type.
+- TokenService emite JWT HS256 con issuer nicamarket-laboratorio, usuario en
+  subject, fecha de emisión, vencimiento de 30 minutos y roles sin ROLE_.
+- POST /api/auth/login autentica las credenciales y devuelve token y type Bearer.
+- GET /api/publico/saludo devuelve {"mensaje":"API NicaMarket operativa"}.
+
+Para probar en Postman:
+
+1. Iniciar la configuración GestionProductosApplication JWT en IntelliJ.
+2. Enviar GET http://localhost:8080/api/publico/saludo sin autenticación.
+3. Enviar POST http://localhost:8080/api/auth/login con Content-Type:
+   application/json y cuerpo {"username":"operador","password":"Operador123!"}.
+4. Usar el campo token de la respuesta en Authorization → Bearer Token para
+   GET http://localhost:8080/api/productos.
+5. Repetir el login con admin y su contraseña de laboratorio para operaciones
+   de modificación. Una contraseña incorrecta devuelve HTTP 401.
+
+Las credenciales del ejemplo son exclusivamente de desarrollo. No guardar
+tokens generados ni el secreto JWT en el repositorio o en capturas.
+
+LoginIntegrationTests verifica el saludo anónimo, login de ambos usuarios,
+firma y claims mediante JwtDecoder, duración exacta de 30 minutos, acceso
+a productos con el token emitido, restricción de escritura para USER,
+ausencia de sesión y rechazo de credenciales incorrectas.
+
+Verificación: suite completa de Maven con 33 pruebas aprobadas, sin fallos
+ni errores, usando PostgreSQL y una clave temporal no publicada.
