@@ -338,3 +338,33 @@ asociación eliminada y las respuestas vacías. Las 20 pruebas del proyecto pasa
 Para ambos retos, reiniciar la aplicación desde IntelliJ y configurar productoId
 y etiquetaId en la colección de Postman. El DELETE de asociación no lleva body.
 Las pruebas automatizadas usan datos temporales y revierten sus cambios.
+
+## Corrección de la retroalimentación: DTO de los catálogos
+
+Se agregaron CategoriaRequestDTO, EtiquetaRequestDTO y ProveedorRequestDTO.
+Las entidades JPA correspondientes ya existían. Los DTO reciben los campos
+editables; el identificador se genera en la base de datos.
+
+Los controladores de categorías, etiquetas y proveedores ahora reciben los DTO
+con @Valid y delegan en CategoriaService, EtiquetaService y ProveedorService.
+Los servicios convierten cada DTO en una entidad nueva y utilizan su repositorio.
+Se mantiene el flujo Controller → Service → Repository.
+
+Los POST conservan HTTP 201 y las rutas existentes:
+
+| Ruta | Ejemplo de cuerpo JSON |
+| --- | --- |
+| /api/categorias | {"nombre":"Accesorios","activa":true} |
+| /api/etiquetas | {"nombre":"Oferta"} |
+| /api/proveedores | {"nombre":"Distribuidora","telefono":"88888888","correo":"ventas@example.com","activo":true} |
+
+Los estados activa y activo son true cuando se omiten; también aceptan false.
+Los nombres son obligatorios y respetan las longitudes de las tablas.
+Proveedor requiere teléfono y correo válido. Las entradas inválidas devuelven
+HTTP 400. Los GET existentes de categorías y proveedores usan los servicios.
+Las respuestas siguen devolviendo las entidades guardadas con su identificador.
+
+Verificación: 24 pruebas exitosas con Maven y PostgreSQL local. Incluyen creación
+de los tres catálogos, persistencia de sus datos, estados predeterminados y
+explícitos, validaciones, CRUD de productos y relaciones con etiquetas.
+Los datos de las pruebas transaccionales se revierten al finalizar.
