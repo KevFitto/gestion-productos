@@ -37,3 +37,26 @@ Verificación de esta etapa:
 - Se detuvo la instancia temporal para liberar 8080.
 - No se ejecutó la suite HTTP anterior en esta etapa; sus peticiones sin
   credenciales ya no representan el contrato de la API protegida.
+
+## Paso 3. Organización de archivos
+
+Se crearon las seis clases vacías de la estructura propuesta dentro del paquete
+principal existente. Se utiliza controller y service en singular para mantener
+la organización del proyecto; equivalen a controllers y services de la guía.
+
+```text
+ni/edu/uam/gestionproductos/
+├── config/SecurityConfig.java
+├── controller/AuthController.java
+├── controller/PublicoController.java
+├── dto/LoginRequest.java
+├── dto/LoginResponse.java
+├── service/TokenService.java
+├── controller/ProductoController.java   (existente)
+└── controller/CategoriaController.java  (existente)
+```
+
+Los controladores CRUD y los demás archivos existentes se conservan.
+Los campos, métodos y anotaciones de las nuevas clases se agregarán conforme
+a los siguientes pasos. Esta organización todavía no cambia la seguridad
+ni agrega endpoints. Verificación: compilación con Maven.
